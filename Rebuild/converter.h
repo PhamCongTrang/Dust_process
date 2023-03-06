@@ -6,6 +6,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <stdint.h>
 
 struct dust_t
 {
@@ -15,14 +16,14 @@ struct dust_t
     int aqi;
     char pollution[50];
 
-    char start_byte[4];
-    char packet_length[4];
-    char sensor_id_hex[4];
+    char start_byte[6];
+    char packet_length[6];
+    char sensor_id_hex[6];
     char timestamp_hex[20];
     char value_hex[20];
     char aqi_hex[10];
-    char checksum[4];
-    char stop_byte[4];
+    char checksum[10];
+    char stop_byte[8];
 };
 /*
 * Use to read each line of f_name_csv to struct dust_t
@@ -67,9 +68,23 @@ int import_csv_to_dust_t(char* f_name_csv, struct dust_t * dust)
 * Use to read each line of f_name_hex to struct dust_t
 * Field will be changed: {start_byte, packet_length, sensor_id_hex, timestamp_hex, value_hex, aqi_hex, checksum, stop_byte}
 */
-void import_hex_to_dust_t(char* f_name_hex, struct dust_t * dust)
+int import_hex_to_dust_t(char* f_name_hex, struct dust_t * dust)
 {
+    FILE* f;
+    f = fopen(f_name_hex, "r");
+    struct dust_t temp;
+    char line[50];
+    int i = 0;
+    while (fgets(line,sizeof(line),f))
+    {
+        char * pch;
 
+        dust[i] = temp;
+        pch = strtok(NULL,"\n");
+        i++;
+    }
+    fclose(f);
+    return i;
 }
 int sum_byte(char *c)
 {
@@ -97,10 +112,8 @@ int sum_byte(char *c)
 * dust_t before: {sensor_id, timestamp, value, aqi, pollution}
 * dust_t after: add {start_byte, packet_length, sensor_id_hex, timestamp_hex, value_hex, aqi_hex, checksum, stop_byte}
 */
-void convert_csv_to_hex(struct dust_t * dust, int size, char* f_name_hex)
+void convert_csv_to_hex(struct dust_t * dust, int size)
 {
-    FILE* fhex;
-    fhex = fopen(f_name_hex,"w");
     for(int i = 0; i < size; i++)
     {
         //-- start_byte_hex
@@ -126,17 +139,15 @@ void convert_csv_to_hex(struct dust_t * dust, int size, char* f_name_hex)
         //--aqi_hex
         itoa(dust[i].aqi,dust[i].aqi_hex,16);
         //--checksum
-        sum = sum_byte(dust[i].packet_length) + sum_byte(dust[i].sensor_id_hex) + sum_byte(dust[i].timestamp_hex) 
+        int sum = 15 + sum_byte(dust[i].sensor_id_hex) + sum_byte(dust[i].timestamp_hex) 
                     + (dust[i].aqi_hex) + sum_byte(dust[i].value_hex);
-        int sum_last_2 = sum % 256;
+        uint8_t sum_last_2 = sum % 256;
         sum_last_2 = ~ sum_last_2 + 1;
-        
-
+        itoa(sum_last_2, dust[i].checksum, 16);
         //--stop_byte
         strcpy(dust[i].stop_byte,"FF");
-
     }
-    fclose(fhex);   
+     
 }
 void format_hex(char* c)
 {
@@ -151,7 +162,7 @@ void format_hex(char* c)
     }
     for(int i = 0; i < n; i++)
     {
-        if(cold[i] >= 'a') cold[i] -=32;
+        if(cold[i] >= 'a') cold[i] -= 32;
         if(j % 3 == 2)
         {
             c[j] = ' ';
@@ -159,7 +170,6 @@ void format_hex(char* c)
         } 
         c[j] = cold[i];
         j++;
-
     }
 }
 void format_dust_hex(struct dust_t* dust, int size)
@@ -172,6 +182,16 @@ void format_dust_hex(struct dust_t* dust, int size)
         format_hex(dust[i].aqi_hex);
         format_hex(dust[i].checksum);
     }
+}
+void print_hex(struct dust_t* dust, int size, char * f_name_hex)
+{
+    FILE* fhex;
+    fhex = fopen(f_name_hex,"w");
+    for(int i = 0; i < size; i++)
+        fprintf(fhex,"%s %s %s %s %s %s %s %s\n", 
+            dust[i].start_byte,dust[i].packet_length, dust[i].sensor_id_hex,
+            dust[i].timestamp_hex,dust[i].value_hex,dust[i].aqi_hex,dust[i].checksum,dust[i].stop_byte);
+    fclose(fhex); 
 }
 /*
 * Use to convert hex info to csv. Print to f_name_csv
@@ -193,7 +213,7 @@ int hex_to_dec(char *c)
     }
     return sum;
 }
-void convert_hex_to_csv(struct dust_t * dust, char* f_name_csv)
+void convert_hex_to_csv(struct dust_t * dust, int size, char* f_name_csv)
 {
 
 }
