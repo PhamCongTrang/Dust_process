@@ -7,26 +7,26 @@
 #include <math.h>
 #include <time.h>
 #include <stdint.h>
-//#include "typedefine.h"
-struct dust_t
-{
-    int sensor_id;
-    char timestamp[20];
-    float value;
-    int aqi;
-    char pollution[80];
+#include "typedefine.h"
+// struct dust_t
+// {
+//     int sensor_id;
+//     char timestamp[20];
+//     float value;
+//     int aqi;
+//     char pollution[80];
 
-    //time_t tim;
+//     //time_t tim;
 
-    char start_byte[6];
-    char packet_length[6];
-    char sensor_id_hex[6];
-    char timestamp_hex[20];
-    char value_hex[20];
-    char aqi_hex[10];
-    char checksum[10];
-    char stop_byte[8];
-};
+//     char start_byte[6];
+//     char packet_length[6];
+//     char sensor_id_hex[6];
+//     char timestamp_hex[20];
+//     char value_hex[20];
+//     char aqi_hex[10];
+//     char checksum[10];
+//     char stop_byte[8];
+// };
 /*
 * Use to read each line of f_name_csv to struct dust_t
 * Field will be changed: {sensor_id, timestamp, value, aqi, pollution}
@@ -166,7 +166,7 @@ void format_hex(char* c)
     }
     for(int i = 0; i < n; i++)
     {
-        if(cold[i] >= 'a') cold[i] -= 32;
+        if(cold[i] >= 'a' && cold[i] <= 'z') cold[i] -= 32;
         if(j % 3 == 2)
         {
             c[j] = ' ';
@@ -175,6 +175,7 @@ void format_hex(char* c)
         c[j] = cold[i];
         j++;
     }
+    c[j] = '\0';
 }
 void format_dust_hex(struct dust_t* dust, int i)
 {
@@ -208,6 +209,7 @@ void convert_csv_to_hex(struct dust_t * dust, int size)
         strcpy(dust[i].packet_length, "0F");
         //--sensor_id_hex
         itoa(dust[i].sensor_id,dust[i].sensor_id_hex,16);
+            *(dust[i].sensor_id_hex + 2) = '\0';
         //--timestamp_hex
         struct tm local;
         local.tm_year = ((dust[i].timestamp)[0]-48)*1000 + ((dust[i].timestamp)[1]-48)*100 + ((dust[i].timestamp)[2]-48)*10 + ((dust[i].timestamp)[3]-48)*1 - 1900;

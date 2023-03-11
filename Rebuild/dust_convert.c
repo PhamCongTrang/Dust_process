@@ -4,13 +4,14 @@
 #include <math.h>
 #include <time.h>
 #include "converter.h"
+#include "typedefine.h"
 
 int main(int argc, char* argv[])
 {
     /*
     * Vung khai bao bien toan cuc
     */
-    struct dust_t dust[10000];
+    struct dust_t dust[1000];
     int size;
     /*
     * Convert CSV to Hex: Mode = 1
@@ -43,10 +44,6 @@ int main(int argc, char* argv[])
     if( Mode == 0)
     {
         size = import_hex_to_dust_t(source_file, dust);
-                for(int i = 0; i < size; i++)
-            printf("%s %s %s %s %s %s %s %s\n", 
-                dust[i].start_byte,dust[i].packet_length, dust[i].sensor_id_hex,
-                dust[i].timestamp_hex,dust[i].value_hex,dust[i].aqi_hex,dust[i].checksum,dust[i].stop_byte);
         convert_hex_to_csv(dust,size);
         printf("\nSize:%d",size);
         print_csv(dust,size, target_file);
