@@ -16,7 +16,7 @@ struct dust_t
     char aqi_hex[10];
     char checksum[10];
     char stop_byte[8];
-    int t;
+    int time;
 };
 
 #endif
