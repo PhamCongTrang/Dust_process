@@ -7,7 +7,7 @@
 #include <math.h>
 #include <time.h>
 #include <stdint.h>
-
+//#include "typedefine.h"
 struct dust_t
 {
     int sensor_id;
@@ -15,6 +15,8 @@ struct dust_t
     float value;
     int aqi;
     char pollution[80];
+
+    //time_t tim;
 
     char start_byte[6];
     char packet_length[6];
@@ -215,6 +217,7 @@ void convert_csv_to_hex(struct dust_t * dust, int size)
         local.tm_min = ((dust[i].timestamp)[14]-48)*10 + ((dust[i].timestamp)[15]-48)*1;
         local.tm_sec = ((dust[i].timestamp)[17]-48)*10 + ((dust[i].timestamp)[18]-48)*1;
         time_t tim = mktime(&local) ; //+ 7*3600
+        //dust[i].tim = tim;
         itoa(tim,dust[i].timestamp_hex,16);
         //--value_hex
         unsigned int temp;
@@ -295,6 +298,7 @@ void convert_hex_to_csv(struct dust_t * dust, int size)
     {
         dust[i].sensor_id = hex_to_dec(dust[i].sensor_id_hex);
         time_t tim = hex_to_dec(dust[i].timestamp_hex);
+        //dust[i].tim = tim;
         struct tm* local;
         local = localtime(&tim);
         strftime(dust[i].timestamp,29,"%Y:%m:%d %H:%M:%S",local);
