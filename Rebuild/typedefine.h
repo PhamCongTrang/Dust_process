@@ -7,7 +7,7 @@ struct dust_t
     float value;
     int aqi;
     char pollution[80];
-    //Change
+
     char start_byte[8];
     char packet_length[6];
     char sensor_id_hex[6];
@@ -16,6 +16,7 @@ struct dust_t
     char aqi_hex[10];
     char checksum[10];
     char stop_byte[8];
+    
     int time;
 };
 

@@ -14,6 +14,8 @@ int main(int argc, char* argv[])
     */
     struct dust_t dust[1000];
     int size;
+    FILE* flog;
+    flog = fopen("dust_convert_run.log","w");
     /*
     * sort[0] : Enable Sort
     * sort[1], sort[2], sort[3] : theo thu tu uu tien sort; nhan cac hoan vi cua 1, 2, 3 
@@ -37,7 +39,6 @@ int main(int argc, char* argv[])
        target_extension[4-i] = target_file[strlen(target_file) - i];
     if(strcmp(source_extension,".csv") && strcmp(target_extension, ".dat")) Mode = 0; // nguoc
     if(strcmp(source_extension,".dat") && strcmp(target_extension, ".csv")) Mode = 1; // nguoc
-    printf("\nMode:%d",Mode);
     // sort setmode
     if(argc > 3 )
         if(strcmp(argv[3],"-s") == 0)
@@ -75,43 +76,50 @@ int main(int argc, char* argv[])
             if(strcmp(argv[argc - 1], "-asc") == 0) sort[4] = 1;
             if(strcmp(argv[argc - 1], "-dsc") == 0) sort[4] = -1;
         }
-    printf("\nSort:");
-    for(int i = 0 ; i < 5; i++) printf(" %d",sort[i]);
+    
     if( Mode == 1 )
     {
         size = import_csv_to_dust_t(source_file, dust);
         convert_csv_to_hex(dust,size);
-        printf("\nSize:%d",size);
     }
     if( Mode == 0)
     {
         size = import_hex_to_dust_t(source_file, dust);
         convert_hex_to_csv(dust,size);
-        printf("\nSize:%d",size);
     }
+    fprintf(flog,"Total number of rows:%d",size);
+    fprintf(flog,"\nSuccesfully converted rows: %d",size);
+    fprintf(flog,"\nError rows: 0");
+
     if(sort[0] == 1)
     {
-    //    for(int i = 3; i >= 1; i--)
-    //     if(sort[i] != 0) sorting(dust, size, sort[i], sort[4]);
-        // sorting(dust, 0, size - 1, sort[1], sort[4]);
-        // struct dust_t temp = dust[0]; int start = 0, end;
-        // if(sort[2] != 0)
-        //     while( end < size)
-        //         {
-        //             if(sort[1] == 1)
-        //                 if(dust[end].sensor_id == temp.sensor_id) end++;
-        //                     else
-        //                     {
+        fprintf(flog,"\nSorting algorithm heap [ms]:%f",heapsort(dust, size, sort));
+        if( Mode == 1 )
+        {
+            size = import_csv_to_dust_t(source_file, dust);
+            convert_csv_to_hex(dust,size);
+        }
+        if( Mode == 0)
+        {
+            size = import_hex_to_dust_t(source_file, dust);
+            convert_hex_to_csv(dust,size);
+        }
+        fprintf(flog,"\nSorting algorithm select [ms]:%f",selection_sort(dust, size, sort));
+        if( Mode == 1 )
+        {
+            size = import_csv_to_dust_t(source_file, dust);
+            convert_csv_to_hex(dust,size);
+        }
+        if( Mode == 0)
+        {
+            size = import_hex_to_dust_t(source_file, dust);
+            convert_hex_to_csv(dust,size);
+        }
+        fprintf(flog,"\nSorting algorithm quick [ms]:%f",quicksort(dust, size, sort));
+    }  
 
-        //                     }
-        //         }
-        selection_sort(dust, size, sort);
-
-    }
-    // for(int i = 0; i < size; i++)
-    //     printf("\n%d,%s,%.1f,%d,%s",dust[i].sensor_id,dust[i].timestamp,dust[i].value,dust[i].aqi,dust[i].pollution);
     if( Mode == 1) print_hex(dust, size, target_file);
     if( Mode == 0) print_csv(dust, size, target_file);
-    printf("\nDone");
+    fclose(flog);
     return 0;
 }
