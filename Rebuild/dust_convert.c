@@ -91,8 +91,22 @@ int main(int argc, char* argv[])
     }
     if(sort[0] == 1)
     {
-       for(int i = 3; i >= 1; i--)
-        if(sort[i] != 0) sorting(dust, size, sort[i], sort[4]);
+    //    for(int i = 3; i >= 1; i--)
+    //     if(sort[i] != 0) sorting(dust, size, sort[i], sort[4]);
+        // sorting(dust, 0, size - 1, sort[1], sort[4]);
+        // struct dust_t temp = dust[0]; int start = 0, end;
+        // if(sort[2] != 0)
+        //     while( end < size)
+        //         {
+        //             if(sort[1] == 1)
+        //                 if(dust[end].sensor_id == temp.sensor_id) end++;
+        //                     else
+        //                     {
+
+        //                     }
+        //         }
+        selection_sort(dust, size, sort);
+
     }
     // for(int i = 0; i < size; i++)
     //     printf("\n%d,%s,%.1f,%d,%s",dust[i].sensor_id,dust[i].timestamp,dust[i].value,dust[i].aqi,dust[i].pollution);
