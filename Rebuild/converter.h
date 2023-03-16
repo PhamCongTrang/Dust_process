@@ -263,7 +263,7 @@ int hex_to_dec(char *c)
     for(int i = 0; i < n; i++ )
     {
         if(c[i] == ' ') continue;
-        int dec;
+        int dec = 0;
         if(c[i] >= '0' && c[i] <= '9') dec = c[i] - '0';
         if(c[i] >= 'A' && c[i] <= 'F') dec = c[i] - 'A' + 10;
         if(c[i] >= 'a' && c[i] <= 'f') dec = c[i] - 'a' + 10;

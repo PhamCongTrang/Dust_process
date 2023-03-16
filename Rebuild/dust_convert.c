@@ -9,10 +9,12 @@
 
 int main(int argc, char* argv[])
 {
+    if(argc == 1) return 1;
     /*
     * Vung khai bao bien toan cuc
     */
-    struct dust_t dust[1000];
+    struct dust_t dust[9000];
+    printf("%d",sizeof(dust[0]));
     int size;
     FILE* flog;
     flog = fopen("dust_convert_run.log","w");
@@ -94,28 +96,29 @@ int main(int argc, char* argv[])
     if(sort[0] == 1)
     {
         fprintf(flog,"\nSorting algorithm heap [ms]:%f",heapsort(dust, size, sort));
-        if( Mode == 1 )
-        {
-            size = import_csv_to_dust_t(source_file, dust);
-            convert_csv_to_hex(dust,size);
-        }
-        if( Mode == 0)
-        {
-            size = import_hex_to_dust_t(source_file, dust);
-            convert_hex_to_csv(dust,size);
-        }
-        fprintf(flog,"\nSorting algorithm select [ms]:%f",selection_sort(dust, size, sort));
-        if( Mode == 1 )
-        {
-            size = import_csv_to_dust_t(source_file, dust);
-            convert_csv_to_hex(dust,size);
-        }
-        if( Mode == 0)
-        {
-            size = import_hex_to_dust_t(source_file, dust);
-            convert_hex_to_csv(dust,size);
-        }
-        fprintf(flog,"\nSorting algorithm quick [ms]:%f",quicksort(dust, size, sort));
+        //reset(dust, size);
+        // if( Mode == 1 )
+        // {
+        //     size = import_csv_to_dust_t(source_file, dust);
+        //     convert_csv_to_hex(dust,size);
+        // }
+        // if( Mode == 0)
+        // {
+        //     size = import_hex_to_dust_t(source_file, dust);
+        //     convert_hex_to_csv(dust,size);
+        // }
+        // fprintf(flog,"\nSorting algorithm select [ms]:%f",selection_sort(dust, size, sort));
+        // if( Mode == 1 )
+        // {
+        //     size = import_csv_to_dust_t(source_file, dust);
+        //     convert_csv_to_hex(dust,size);
+        // }
+        // if( Mode == 0)
+        // {
+        //     size = import_hex_to_dust_t(source_file, dust);
+        //     convert_hex_to_csv(dust,size);
+        // }
+        // fprintf(flog,"\nSorting algorithm quick [ms]:%f",quicksort(dust, size, sort));
     }  
 
     if( Mode == 1) print_hex(dust, size, target_file);

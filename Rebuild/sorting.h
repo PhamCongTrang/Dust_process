@@ -191,3 +191,12 @@ double heapsort(struct dust_t* dust, int size, int* sort)
     run_time = (double) (end - start)/CLOCKS_PER_SEC;
     return run_time*1000;
 }
+int reset(struct dust_t* dust, int size)
+{
+    static const struct dust_t Empty;
+    for(int i = 0; i <= size; i++)
+    {
+        dust[i] = Empty;
+    }
+    return 0;
+}
